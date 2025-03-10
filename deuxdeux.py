@@ -4,11 +4,8 @@
 #Have a master sheet that pulls data from all other sheets as like a lifetime stats?
 #give user option with stats to look at lifetime vs a specific event?
 #player object, pull params from other columns in excel after the name??
+#***Add stats leadesr to eventStats()
 
-#***Included some of the stats in spreadsheet to reduce need to traverse spreadsheet and computation leading to reduced runtime
-#***Standardized formulas for all stats to be rounded to 2 decimals and be based off of players' total rounds in events rather than avg of stats at end of games. This is to prevent skewing of results as rounds are not equal from game to game which could cause abnormal stats(think HS%).   
-#***Add columns in spreadsheet to signify mvp and winners??
-#***maybe allow users to pull some kind of generic stats for an event... mvp, stat leaders, winner, etc.
 
 #pd.read_excel("2v2stats.xlsx")
 stats = open("2v2stats.xslx")
@@ -25,7 +22,7 @@ def ADR(self, player):
     #separate by rows
     for entry in stats: 
         if entry == player.name:  #player input will determine row
-            ADR = columnG  
+            ADR = columnO  
     
     print("ADR: " + ADR)
 
@@ -113,9 +110,7 @@ def eventStats(self, tournamnet):
 
                 
     print("Winners: " + winners + "\n") #column P
-    print("MVP: " + MVP + "\n") #Column O
+    print("MVP: " + MVP + "\n") #Column Q
     print("EVPs: " + EVPs + "\n")
     #show stats leaders for the tourney?
-
-
 
