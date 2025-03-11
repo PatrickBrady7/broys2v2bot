@@ -1,116 +1,103 @@
-#import pandas as pd
+import csv
 
 #Use sheets in excel to differentiate between tournaments?
 #Have a master sheet that pulls data from all other sheets as like a lifetime stats?
 #give user option with stats to look at lifetime vs a specific event?
-#player object, pull params from other columns in excel after the name??
-#***Add stats leadesr to eventStats()
+#***Add stats leaders to eventStats()
 
+stats = open('2v2stats.csv', 'r')
 
-#pd.read_excel("2v2stats.xlsx")
-stats = open("2v2stats.xslx")
+def HSpercentage(player):
+    for row in stats: 
+        entries = row.split(",")
+        if entries[0] == player:
+            print("HS%: " + entries[13])
 
-def HSpercentage(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            HSP = columnN
+def ADR(player):
+    for row in stats: 
+        entries = row.split(",")
+        if entries[0] == player:
+            print("ADR: " + entries[14])
 
-    print("HS%: " + HSP)
-
-def ADR(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            ADR = columnO  
-    
-    print("ADR: " + ADR)
-
-def KPR(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            KPR = columnI
-    
-    print("KPR: " + KPR)   
+def KPR(player):
+    for row in stats:
+        entries = row.split(",")
+        if entries[0] == player: 
+            print("KPR: " + entries[8])   
   
-def DPR(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            DPR = columnJ
-    
-    print("DPR: " + DPR)   
+def DPR(player):
+    for row in stats:
+        entries = row.split(",")
+        if entries[0] == player:
+            print("DPR: " + entries[9])   
 
-def EFR(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            EFR = columnL
-    
-    print("EF per Round: " + EFR)  
+def EFR(player):
+    for row in stats:
+        entries = row.split(",")
+        if entries[0] == player:
+            print("EF per Round: " + entries[11])  
 
-def UDR(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            UDR = columnK
-    
-    print("UD per Round: " + UDR)  
+def UDR(player):
+    for row in stats:
+        entries = row.split(",") 
+        if entries[0] == player:
+            print("UD per Round: " + entries[10])  
 
-def KD(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            KD = columnM
-    
-    print("KD: " + KD)
+def KD(player):
+    for row in stats:
+        entries = row.split(",") 
+        if entries[0] == player:
+            return entries[12]
 
-def Rounds(self, player):
-    #separate by rows
-    for entry in stats: 
-        if entry == player.name:  #player input will determine row
-            R = columnH
-    print(R)     
+def Rounds(player):
+    for row in stats:
+        entries = row.split(",") 
+        if entries[0] == player:
+            return entries[7]
+              
 
-def playerStats(self, player):
-    print(player + "'s stats over " + Rounds(self, player) + " rounds:\n")
-    KD(self, player)
+def playerStats(player):
+    print("Rounds played:" + str(Rounds(player)))
+    print("KD: ", end = "")
+    print(KD(player))
+    ADR(player)
     print("\t")
-    ADR(self, player)
-    print("\t")
-    HSpercentage(self, player)
+    HSpercentage(player)
     print()
-    KPR(self, player)
+    KPR(player)
     print("\t")
-    DPR(self, player)
+    DPR(player)
     print()
-    UDR(self, player)
+    UDR(player)
     print("\t")
-    EFR(self, player)
+    EFR(player)
     print()
     #print("'!advStats *player*' for advanced stats")
 
-def eventStats(self, tournamnet):
+def eventStats(tournamnet):
     winners = []
     EVPs = [] #List for EVPs
     MVP = ""
     print("Summary fo stats for " + tournamnet + ":\n") #Grab from sheet name?
     #Iterate to find mvp/evp/placements
-    for entry in stats:
-        name = ""
-        name = columnA 
-        for column in entry:
-            if column == "MVP": 
+    for row in stats:
+        entries = row.split(",")
+        name = entries[0] 
+        for column in entries:
+            if column == "MVP: ": 
                 MVP = name
-            elif column == "EVP":
+            elif column == "EVP: ":
                 EVPs.append(name)
             elif column == "1st":
                 winners.append(name)
 
                 
-    print("Winners: " + winners + "\n") #column P
-    print("MVP: " + MVP + "\n") #Column Q
+    print("Winners: " + winners + "\n")
+    print("MVP: " + MVP + "\n")
     print("EVPs: " + EVPs + "\n")
     #show stats leaders for the tourney?
 
+#print(Rounds("Joey"))
+#print(KD("Joey"))
+#print(Rounds("Danzo"))
+#print(Rounds("Joey"))
