@@ -1,5 +1,4 @@
 import csv
-#Add stats leaders to eventStats()
 
 stats = open('2v2stats.csv', 'r')
 nest = []
@@ -48,7 +47,6 @@ def Rounds(player):
         if row[0] == player:
             return row[7]
               
-
 def playerStats(player):
     print(player + "'s stats over " + str(Rounds(player)) + " rounds played:")
    
@@ -94,19 +92,19 @@ def eventStats():
             continue
 
         #Finds stat leaders for events
-        if kdCurr > kdLeader:   #KD Leader
+        if float(kdCurr) > float(kdLeader):   #KD Leader
             kdLeader3 = kdLeader2
             kdLeaderName3 = kdLeaderName2
             kdLeader2 = kdLeader
             kdLeaderName2 = kdLeaderName
             kdLeader = kdCurr
             kdLeaderName = name
-        elif kdCurr > kdLeader2:
+        elif float(kdCurr) > float(kdLeader2):
             kdLeader3 = kdLeader2
             kdLeaderName3 = kdLeaderName2
             kdLeader2 = kdCurr
             kdLeaderName2 = name
-        elif kdCurr > kdLeader3:
+        elif float(kdCurr) > float(kdLeader3):
             kdLeader3 = kdCurr
             kdLeaderName3 = name
 
@@ -126,35 +124,35 @@ def eventStats():
             kprLeader3 = kprCurr
             kprLeaderName3 = name
 
-        if adrCurr > adrLeader: #ADR Leader - bugs out with adr over 99.99???
+        if float(adrCurr) > float(adrLeader): #ADR Leader - bugs out with adr over 99.99???
             adrLeader3 = adrLeader2
             adrLeaderName3 = adrLeaderName2
             adrLeader2 = adrLeader
             adrLeaderName2 = adrLeaderName
             adrLeader = adrCurr
             adrLeaderName = name
-        elif adrCurr > adrLeader2:
+        elif float(adrCurr) > float(adrLeader2):
             adrLeader3 = adrLeader2
             adrLeaderName3 = adrLeaderName2
             adrLeader2 = adrCurr
             adrLeaderName2 = name
-        elif adrCurr > adrLeader3:
+        elif float(adrCurr) > float(adrLeader3):
             adrLeader3 = adrCurr
             adrLeaderName3 = name
 
-        if hspCurr > hspLeader: #HSP Leader
+        if float(hspCurr) > float(hspLeader): #HSP Leader
             hspLeader3 = hspLeader2
             hspLeaderName3 = hspLeaderName2
             hspLeader2 = hspLeader
             hspLeaderName2 = hspLeaderName
             hspLeader = hspCurr
             hspLeaderName = name
-        elif hspCurr > hspLeader2:
+        elif float(hspCurr) > float(hspLeader2):
             hspLeader3 = hspLeader2
             hspLeaderName3 = hspLeaderName2
             hspLeader2 = hspCurr
             hspLeaderName2 = name
-        elif hspCurr > hspLeader3:
+        elif float(hspCurr) > float(hspLeader3):
             hspLeader3 = hspCurr
             hspLeaderName3 = name
 
@@ -174,23 +172,21 @@ def eventStats():
             dprLeader3 = dprCurr
             dprLeaderName3 = name
 
-        if udrCurr > udrLeader:
+        if float(udrCurr) > float(udrLeader):
             udrLeader3 = udrLeader2
             udrLeaderName3 = udrLeaderName2
             udrLeader2 = udrLeader
             udrLeaderName2 = udrLeaderName
             udrLeader = udrCurr
             udrLeaderName = name
-        elif udrCurr > udrLeader2:
+        elif float(udrCurr) > float(udrLeader2):
             udrLeader3 = udrLeader2
             udrLeaderName3 = udrLeaderName2
             udrLeader2 = udrCurr
             udrLeaderName2 = name
-        elif udrCurr > udrLeader3:
+        elif float(udrCurr) > float(udrLeader3):
             udrLeader3 = udrCurr
             udrLeaderName3 = name
-
-
 
         if efrCurr > efrLeader:
             efrLeader3 = efrLeader2
@@ -208,9 +204,6 @@ def eventStats():
             efrLeader3 = efrCurr
             efrLeaderName3 = name
 
-
-
-
         #MVP, EVPs, Winners
         if row[16] == "MVP\n": 
             MVP = name
@@ -219,7 +212,6 @@ def eventStats():
         if row[15] == "1st":
             winners.append(name)
 
-                
     print("Winners: " + winners[0] + " & " + winners[1])
     print()
     print("MVP: " + MVP)
