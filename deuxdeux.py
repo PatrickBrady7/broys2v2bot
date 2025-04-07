@@ -229,12 +229,30 @@ def eventStats():
     print("--------------------------------")
     print()
     print("Stats leaders for event:")
-    print("KD:  " + kdLeaderName + ", " + kdLeader + "  | " + kdLeaderName2 + ", " + kdLeader2 + " | " + kdLeaderName3 + ", " + kdLeader3)
-    print("KPR: " + kprLeaderName + ", " + kprLeader + " | " + kprLeaderName2 + ", " + kprLeader2 + " | " + kprLeaderName3 + ", " + kprLeader3)
-    print("DPR: " + dprLeaderName + ", " + dprLeader + " | " + dprLeaderName2 + ", " + dprLeader2 + " | " + dprLeaderName3 + ", " + dprLeader3)
-    print("ADR: " + adrLeaderName + ", " + adrLeader + " | " + adrLeaderName2 + ", " + adrLeader2 + " | " + adrLeaderName3 + ", " + adrLeader3)
-    print("HS%: " + hspLeaderName + ", " + hspLeader + "% | " + hspLeaderName2 + ", " + hspLeader2 + "% | " + hspLeaderName3 + ", " + hspLeader3 + "%")
-    print("UDR: " + udrLeaderName + ", " + udrLeader + " | " + udrLeaderName2 + ", " + udrLeader2 + " | " + udrLeaderName3 + ", " + udrLeader3)
-    print("EFR: " + efrLeaderName + ", " + efrLeader + " | " + efrLeaderName2 + ", " + efrLeader2 + " | " + efrLeaderName3 + ", " + efrLeader3)
+    print("KD:  " + kdLeaderName + ": " + kdLeader + "  | " + kdLeaderName2 + ": " + kdLeader2 + " | " + kdLeaderName3 + ": " + kdLeader3)
+    print("KPR: " + kprLeaderName + ": " + kprLeader + " | " + kprLeaderName2 + ": " + kprLeader2 + " | " + kprLeaderName3 + ": " + kprLeader3)
+    print("DPR: " + dprLeaderName + ": " + dprLeader + " | " + dprLeaderName2 + ": " + dprLeader2 + " | " + dprLeaderName3 + ": " + dprLeader3)
+    print("ADR: " + adrLeaderName + ": " + adrLeader + " | " + adrLeaderName2 + ": " + adrLeader2 + " | " + adrLeaderName3 + ": " + adrLeader3)
+    print("HS%: " + hspLeaderName + ": " + hspLeader + "% | " + hspLeaderName2 + ": " + hspLeader2 + "% | " + hspLeaderName3 + ": " + hspLeader3 + "%")
+    print("UDR: " + udrLeaderName + ": " + udrLeader + " | " + udrLeaderName2 + ": " + udrLeader2 + " | " + udrLeaderName3 + ": " + udrLeader3)
+    print("EFR: " + efrLeaderName + ": " + efrLeader + " | " + efrLeaderName2 + ": " + efrLeader2 + " | " + efrLeaderName3 + ": " + efrLeader3)
 
 eventStats()
+print()
+while True:
+    playerName = input("Is there a specific player that you would know to get further stats on? Enter their name(case sensitive, hit Ctrl + C to end).")
+    for row in nest: 
+        if row[0] == playerName:
+            playerStats(playerName)
+            break
+        elif row[0] != playerName and row == nest[-1]:
+            print("Name not recognized, here are available options: ", end = "")
+            for row in nest:
+                if row == nest[0]: #needed to skip the initial row of names
+                    continue
+                else:
+                    print(row[0], end = " ")
+            print()
+        else:
+            continue
+
