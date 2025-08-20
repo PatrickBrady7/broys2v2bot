@@ -1,6 +1,42 @@
-import csv
+import csv, os
 
-stats = open('2v2stats.csv', 'r')
+#Add option to go back to tourney selection?
+
+#Option to include all csv files for lifetime stats
+    #Change logic for populating nest to not have names be repeated, but add values to existing names
+        #Have specific cell values added/averaged depending on the stat?
+        #To reduce repeated code changes should be done in nest despite it probably being more complicated?
+        #Nest population from stats already needs changing, would rather only touch that section of code to avoid breaking more areas
+
+
+currDirName = os.path.dirname(os.path.abspath(__file__))
+currDirEntries = os.listdir(currDirName)
+currDirFiles = [f for f in currDirEntries if os.path.isfile(os.path.join(currDirName, f))]
+tourneyNumber = ""
+
+print("Here is a list of available tournies: ")
+for fileName in currDirFiles:
+    if fileName.endswith(".csv"):
+        print(fileName, end = "\t")
+print()
+
+while True: #Used to select tournament from specified options in working dir
+    try:
+        tourneyNumber = input("Please enter the name of the file you want to access.\n")
+
+        if tourneyNumber.endswith(".csv"):
+            for fileName in currDirFiles:
+                if tourneyNumber == fileName:
+                    print("Gathering data for specified tourney...")
+                    break
+            break
+        else:
+            print("Input invalid, please try again.")      
+    finally:
+        print("")
+
+
+stats = open(tourneyNumber, 'r')
 nest = []
 for name in stats:          #Puts all data in a nested list for easier & quicker access
     rows = name.split(",")
@@ -124,7 +160,7 @@ def eventStats():
             kprLeader3 = kprCurr
             kprLeaderName3 = name
 
-        if float(adrCurr) > float(adrLeader): #ADR Leader - bugs out with adr over 99.99???
+        if float(adrCurr) > float(adrLeader): #ADR Leader
             adrLeader3 = adrLeader2
             adrLeaderName3 = adrLeaderName2
             adrLeader2 = adrLeader
@@ -156,7 +192,7 @@ def eventStats():
             hspLeader3 = hspCurr
             hspLeaderName3 = name
 
-        if dprCurr < dprLeader: #DPR Leader... Lower is better
+        if dprCurr < dprLeader: #DPR Leader, Lower is better
             dprLeader3 = dprLeader2
             dprLeaderName3 = dprLeaderName2
             dprLeader2 = dprLeader
