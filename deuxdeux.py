@@ -1,24 +1,23 @@
 import csv, os
 
-#Add option to go back to tourney selection?
+#Add option to go back to tourney selection
+    #Option currently terminates the program...this might be a pain to implement
 
 #Option to include all csv files for lifetime stats
-    #Change logic for populating nest to not have names be repeated, but add values to existing names
-        #Have specific cell values added/averaged depending on the stat?
-        #To reduce repeated code changes should be done in nest despite it probably being more complicated?
-        #Nest population from stats already needs changing, would rather only touch that section of code to avoid breaking more areas
+    #Currently can read all csv files in working dir, need to not have redundancies. Instead add/average.
 
 
 currDirName = os.path.dirname(os.path.abspath(__file__))
 currDirEntries = os.listdir(currDirName)
 currDirFiles = [f for f in currDirEntries if os.path.isfile(os.path.join(currDirName, f))]
+nest = []
 tourneyNumber = ""
 
 print("Here is a list of available tournies: ")
 for fileName in currDirFiles:
     if fileName.endswith(".csv"):
         print(fileName, end = "\t")
-print()
+print("All")
 
 while True: #Used to select tournament from specified options in working dir
     try:
@@ -30,18 +29,37 @@ while True: #Used to select tournament from specified options in working dir
                     print("Gathering data for specified tourney...")
                     break
             break
+        elif tourneyNumber == "All":
+            print("This will display stats from all tournaments in the current directory.")
+            break
         else:
             print("Input invalid, please try again.")      
     finally:
         print("")
 
+if tourneyNumber == "All":
+    for fileName in currDirFiles:
+        if fileName.endswith(".csv"):
+            stats = open(fileName, 'r')
+            for name in stats:          #Puts all data in a nested list for easier & quicker access
+                rows = name.split(",")
+                nest.append(rows)
+            stats.close()
+    
+else:
+    stats = open(tourneyNumber, 'r')
+    for name in stats:          #Puts all data in a nested list for easier & quicker access
+        rows = name.split(",")
+        nest.append(rows)
+    stats.close()
 
-stats = open(tourneyNumber, 'r')
-nest = []
-for name in stats:          #Puts all data in a nested list for easier & quicker access
-    rows = name.split(",")
-    nest.append(rows)
-stats.close()
+#Delete Generic Row
+rowCounter = 0
+for row in nest:
+    if row[0] == "ï»¿player" or row[0] == "player":
+        nest.pop(rowCounter)
+    rowCounter +=1
+
 
 def HSpercentage(player):
     for row in nest:
@@ -123,9 +141,6 @@ def eventStats():
         kdCurr, adrCurr, hspCurr = KD(name), ADR(name), HSpercentage(name)
         kprCurr, dprCurr = KPR(name), DPR(name)
         udrCurr, efrCurr = UDR(name), EFR(name)
-        
-        if name == "ï»¿player": #needed to skip the initial row of params
-            continue
 
         #Finds stat leaders for events
         if float(kdCurr) > float(kdLeader):   #KD Leader
@@ -276,7 +291,11 @@ def eventStats():
 eventStats()
 print()
 while True:
-    playerName = input("Is there a specific player that you would know to get further stats on? Enter their name(case sensitive, hit Ctrl + C to end).")
+    playerName = input("Please type a player's name to get more advanced stats, or type 'Back' to go back to tournament selection.")
+    if playerName == "Back":
+        print("This feature doesnt work currently :DDD")
+        exit()
+
     for row in nest: 
         if row[0] == playerName:
             playerStats(playerName)
@@ -284,10 +303,7 @@ while True:
         elif row[0] != playerName and row == nest[-1]:
             print("Name not recognized, here are available options: ", end = "")
             for row in nest:
-                if row == nest[0]: #needed to skip the initial row of names
-                    continue
-                else:
-                    print(row[0], end = " ")
+                print(row[0], end = " ")
             print()
         else:
             continue
