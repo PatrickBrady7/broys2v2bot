@@ -1,8 +1,6 @@
 import csv, os
 
-#Option to include all csv files for lifetime stats
-    #Combined currently can remove dups, should combine stats instead.
-        #Mainly a formatting/consistentcy thing. EX: Display all mvps vs just 1, verbage, etc...
+#Add option to end program?
 
 currDirName = os.path.dirname(os.path.abspath(__file__))
 currDirEntries = os.listdir(currDirName)
@@ -49,19 +47,32 @@ def getStats():
                 for name in stats:          #Puts all data in a nested list for easier & quicker access, filtering for dups
                     rows = name.split(",")
                     if rows[0] in dups:
-                        print(rows[0])
-                        #indexOfDup = nest.index(rows)
-                        #indexOfDupName = nest.index()
-
-                        #for ele in otherlist:
-                        #    if nested_list[0][0] in ele:
-                        #        yes= otherlist.index(ele)
-                        #        print("this ele contains a 1: " + str(otherlist.index(ele)))
-                        #        nested_list[0][0] *= nested_list[0][1]
-                        #        nested_list[0][0] += otherlist[yes][0]*otherlist[yes][1]
-                        #        nested_list[0][1] += otherlist[yes][1]
-                        #        nested_list[0][0] /= nested_list[0][1]
-                        #        nested_list[0][0] = int(nested_list[0][0])
+                        entryCount = 0
+                        for entries in nest:
+                            if rows[0] == entries[0] and rows[0] != "ï»¿player":
+                                #Combines stats, calulates some others live
+                                entries[1] = str(int(rows[1])+int(entries[1])) #k
+                                entries[2] = str(int(rows[2])+int(entries[2])) #hs
+                                entries[3] = str(int(rows[3])+int(entries[3])) #d
+                                entries[4] = str(int(rows[4])+int(entries[4])) #ud
+                                entries[5] = str(int(rows[5])+int(entries[5])) #ef
+                                entries[6] = str(int(rows[6])+int(entries[6])) #dam
+                                entries[7] = str(int(rows[7])+int(entries[7])) #r
+                                entries[8] = str(round(int(entries[1])/int(entries[7]), 2)) #kpr
+                                entries[9] = str(round(int(entries[3])/int(entries[7]), 2)) #dpr
+                                entries[10] = str(round(int(entries[4])/int(entries[7]), 2)) #udr
+                                entries[11] = str(round(int(entries[5])/int(entries[7]), 2)) #efr
+                                entries[12] = str(round(int(entries[1])/int(entries[3]), 2)) #kd
+                                entries[13] = str(round(int(entries[2])/int(entries[1]), 4)*100) #hsp
+                                entries[14] = str(round(int(entries[6])/int(entries[7]), 2)) #adr
+                                if rows[15] == "1st":                                      #placement
+                                    entries[15] = "1st"
+                                if rows[16] != "none":                                      #personal awards
+                                    if rows[16] == "MVP\n" and entries[16] != "MVP\n":
+                                        entries[16] = "MVP\n"
+                                    if rows[16] == "EVP\n" and entries[16] == "none":
+                                        entries[16] = "EVP\n"
+                            entryCount +=1
                     else:
                         nest.append(rows)
                         dups.append(rows[0])
