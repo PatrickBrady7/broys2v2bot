@@ -1,7 +1,5 @@
 import csv, os
 
-#Add option to end program?
-
 currDirName = os.path.dirname(os.path.abspath(__file__))
 currDirEntries = os.listdir(currDirName)
 currDirFiles = [f for f in currDirEntries if os.path.isfile(os.path.join(currDirName, f))]
@@ -16,20 +14,21 @@ def eventSelect():
     print("AllCombined\tAllSeparate")
     while True: #Used to select tournament from specified options in working dir
         try:
-            tourneyNumber = input("Please enter the name of the file you want to access. Either 'All' option will show lifetime stats, either combined or separate.\n")
+            tourneyNumber = input("Enter the name of the file you want to access. All options show lifetime stats, either combined or separate. Exit terminates the program.\n")
             tourneyNumber = tourneyNumber.lower()
             if tourneyNumber.endswith(".csv"):
                 for fileName in currDirFiles:
                     if tourneyNumber == fileName:
                         print("Gathering data for specified tourney...")
-                        return tourneyNumber
                 break
             elif tourneyNumber == "allcombined":
-                print("This will display combined stats from all tournaments in the current directory.")
-                return tourneyNumber
+                print("Gathering combined stats from tournaments...")
+                break
             elif tourneyNumber == "allseparate":
-                print("This will display stats from all tournaments in the current directory.")
-                return tourneyNumber
+                print("Gathering stats from tournaments...")
+                break
+            elif tourneyNumber == "exit":
+                exit()
             else:
                 print("Input invalid, please try again.")      
         finally:
@@ -46,7 +45,7 @@ def getStats():
                 stats = open(fileName, 'r')
                 for name in stats:          #Puts all data in a nested list for easier & quicker access, filtering for dups
                     rows = name.split(",")
-                    if rows[0] in dups:
+                    if rows[0] in dups: #Only will run if it is a duplicate player
                         entryCount = 0
                         for entries in nest:
                             if rows[0] == entries[0] and rows[0] != "ï»¿player":
@@ -70,7 +69,7 @@ def getStats():
                                 if rows[16] != "none":                                      #personal awards
                                     if rows[16] == "MVP\n" and entries[16] != "MVP\n":
                                         entries[16] = "MVP\n"
-                                    if rows[16] == "EVP\n" and entries[16] == "none":
+                                    if rows[16] == "EVP\n" and entries[16] == "none\n":
                                         entries[16] = "EVP\n"
                             entryCount +=1
                     else:
@@ -124,7 +123,7 @@ def Rounds(player):
     return nest[player][7]
               
 def playerStats(player, index):
-    print(player + "'s stats over " + str(Rounds(index)) + " rounds played:")
+    print(player + "'s stats over " + Rounds(index) + " rounds:")
    
     print("KD: " + KD(index))
     print("ADR: " + ADR(index))
@@ -342,7 +341,7 @@ getStats()
 eventStats()
 print()
 while True:
-    playerName = input("Please type a player's name to get their stats, or type 'back' to go back to tournament selection.")
+    playerName = input("Type a player's name to get their stats, 'back' to go to tournament selection, or 'exit' to terminate.")
     
     if playerName == "back":
         nest.clear()
@@ -350,6 +349,8 @@ while True:
         getStats()
         eventStats()
         print()
+    elif playerName == "exit":
+        exit()
     else:
         timesPrinted = 0
         index = -1
