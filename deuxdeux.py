@@ -1,12 +1,9 @@
 import csv, os
 
-#Add option to end program?
-
-currDirName = os.path.dirname(os.path.abspath(__file__))
-currDirEntries = os.listdir(currDirName)
-currDirFiles = [f for f in currDirEntries if os.path.isfile(os.path.join(currDirName, f))]
+currDir = os.path.dirname(os.path.abspath(__file__))
+currDirEntries = os.listdir(currDir)
+currDirFiles = [f for f in currDirEntries if os.path.isfile(os.path.join(currDir, f))]
 nest = []
-tourneyNumber = ""
 
 def eventSelect():
     print("Here is a list of available tournies: ")
@@ -16,41 +13,41 @@ def eventSelect():
     print("AllCombined\tAllSeparate")
     while True: #Used to select tournament from specified options in working dir
         try:
-            tourneyNumber = input("Please enter the name of the file you want to access. Either 'All' option will show lifetime stats, either combined or separate.\n")
-            tourneyNumber = tourneyNumber.lower()
-            if tourneyNumber.endswith(".csv"):
+            tourneyName = input("Enter the name of the file you want to access. All options show lifetime stats, either combined or separate. Exit terminates the program.\n")
+            tourneyName = tourneyName.lower()
+            if tourneyName.endswith(".csv"):
                 for fileName in currDirFiles:
-                    if tourneyNumber == fileName:
+                    if tourneyName == fileName:
                         print("Gathering data for specified tourney...")
-                        return tourneyNumber
                 break
-            elif tourneyNumber == "allcombined":
-                print("This will display combined stats from all tournaments in the current directory.")
-                return tourneyNumber
-            elif tourneyNumber == "allseparate":
-                print("This will display stats from all tournaments in the current directory.")
-                return tourneyNumber
+            elif tourneyName == "allcombined":
+                print("Gathering combined stats from tournaments...")
+                break
+            elif tourneyName == "allseparate":
+                print("Gathering stats from tournaments...")
+                break
+            elif tourneyName == "exit":
+                exit()
             else:
                 print("Input invalid, please try again.")      
         finally:
             print("")
-    return tourneyNumber
+    return tourneyName
 
-tourneyNumber = eventSelect()
+tourney = eventSelect()
 
 def getStats():
-    if tourneyNumber == "allcombined":  #Code to combine stats with same name
+    if tourney == "allcombined":
         dups = []
         for fileName in currDirFiles:
             if fileName.endswith(".csv"):
                 stats = open(fileName, 'r')
-                for name in stats:          #Puts all data in a nested list for easier & quicker access, filtering for dups
+                for name in stats:
                     rows = name.split(",")
                     if rows[0] in dups:
                         entryCount = 0
                         for entries in nest:
                             if rows[0] == entries[0] and rows[0] != "ï»¿player":
-                                #Combines stats, calulates some others live
                                 entries[1] = str(int(rows[1])+int(entries[1])) #k
                                 entries[2] = str(int(rows[2])+int(entries[2])) #hs
                                 entries[3] = str(int(rows[3])+int(entries[3])) #d
@@ -65,36 +62,35 @@ def getStats():
                                 entries[12] = str(round(int(entries[1])/int(entries[3]), 2)) #kd
                                 entries[13] = str(round(int(entries[2])/int(entries[1]), 4)*100) #hsp
                                 entries[14] = str(round(int(entries[6])/int(entries[7]), 2)) #adr
-                                if rows[15] == "1st":                                      #placement
+                                if rows[15] == "1st":
                                     entries[15] = "1st"
-                                if rows[16] != "none":                                      #personal awards
+                                if rows[16] != "none":
                                     if rows[16] == "MVP\n" and entries[16] != "MVP\n":
                                         entries[16] = "MVP\n"
-                                    if rows[16] == "EVP\n" and entries[16] == "none":
+                                    if rows[16] == "EVP\n" and entries[16] == "none\n":
                                         entries[16] = "EVP\n"
                             entryCount +=1
                     else:
                         nest.append(rows)
                         dups.append(rows[0])
                 stats.close()
-    elif tourneyNumber == "allseparate": #Combine tourneys, not playes
+    elif tourney == "allseparate":
         for fileName in currDirFiles:
             if fileName.endswith(".csv"):
                 stats = open(fileName, 'r')
-                for name in stats:          #Puts all data in a nested list for easier & quicker access, not filtering for dups
+                for name in stats:
                     rows = name.split(",")
                     nest.append(rows)
                 stats.close()
     else:
-        stats = open(tourneyNumber, 'r')
-        for name in stats:          #Puts all data in a nested list for easier & quicker access
+        stats = open(tourney, 'r')
+        for name in stats:
             rows = name.split(",")
             nest.append(rows)
         stats.close()
 
-    #Delete Generic Row
     rowCounter = 0
-    for row in nest:
+    for row in nest:    #Delete Generic Row
         if row[0] == "ï»¿player" or row[0] == "player":
             nest.pop(rowCounter)
         rowCounter +=1
@@ -124,7 +120,7 @@ def Rounds(player):
     return nest[player][7]
               
 def playerStats(player, index):
-    print(player + "'s stats over " + str(Rounds(index)) + " rounds played:")
+    print(player + "'s stats over " + Rounds(index) + " rounds:")
    
     print("KD: " + KD(index))
     print("ADR: " + ADR(index))
@@ -138,11 +134,10 @@ def playerStats(player, index):
 
 def eventStats():
     winners = []
-    EVPs = [] #Lists for EVPs & winners
-    MVPs = [] #used for all separate
+    EVPs = []
+    MVPs = []
     MVP = ""
-    MVPIndex = 0
-    indexCount = 0
+    MVPIndex, indexCount = 0, 0
     kdLeader, kdLeader2, kdLeader3= "0", "0", "0"
     kprLeader, kprLeader2, kprLeader3 = "0", "0", "0"
     adrLeader, adrLeader2, adrLeader3 = "0", "0", "0"
@@ -158,17 +153,15 @@ def eventStats():
     udrLeaderName, udrLeaderName2, udrLeaderName3 = "", "", ""
     efrLeaderName, efrLeaderName2, efrLeaderName3 = "", "", ""
 
-    print("Summary of stats for " + tourneyNumber + ":")
+    print("Summary of stats for " + tourney + ":")
     print()
-    #Iterate to find event stats
     for row in nest:
         name = row[0]
         kdCurr, adrCurr, hspCurr = KD(indexCount), ADR(indexCount), HSpercentage(indexCount)
         kprCurr, dprCurr = KPR(indexCount), DPR(indexCount)
         udrCurr, efrCurr = UDR(indexCount), EFR(indexCount)
 
-        #Finds stat leaders for events
-        if float(kdCurr) > float(kdLeader):   #KD Leader
+        if float(kdCurr) > float(kdLeader):
             kdLeader3 = kdLeader2
             kdLeaderName3 = kdLeaderName2
             kdLeader2 = kdLeader
@@ -184,7 +177,7 @@ def eventStats():
             kdLeader3 = kdCurr
             kdLeaderName3 = name
 
-        if kprCurr > kprLeader: #KPR Leader
+        if kprCurr > kprLeader:
             kprLeader3 = kprLeader2
             kprLeaderName3 = kprLeaderName2
             kprLeader2 = kprLeader
@@ -200,7 +193,7 @@ def eventStats():
             kprLeader3 = kprCurr
             kprLeaderName3 = name
 
-        if float(adrCurr) > float(adrLeader): #ADR Leader
+        if float(adrCurr) > float(adrLeader):
             adrLeader3 = adrLeader2
             adrLeaderName3 = adrLeaderName2
             adrLeader2 = adrLeader
@@ -216,7 +209,7 @@ def eventStats():
             adrLeader3 = adrCurr
             adrLeaderName3 = name
 
-        if float(hspCurr) > float(hspLeader): #HSP Leader
+        if float(hspCurr) > float(hspLeader):
             hspLeader3 = hspLeader2
             hspLeaderName3 = hspLeaderName2
             hspLeader2 = hspLeader
@@ -232,7 +225,7 @@ def eventStats():
             hspLeader3 = hspCurr
             hspLeaderName3 = name
 
-        if dprCurr < dprLeader: #DPR Leader, Lower is better
+        if dprCurr < dprLeader:
             dprLeader3 = dprLeader2
             dprLeaderName3 = dprLeaderName2
             dprLeader2 = dprLeader
@@ -280,7 +273,6 @@ def eventStats():
             efrLeader3 = efrCurr
             efrLeaderName3 = name
 
-        #MVP, EVPs, Winners
         if row[16] == "MVP\n": 
             MVP = name
             MVPIndex = indexCount
@@ -291,17 +283,15 @@ def eventStats():
         if row[15] == "1st":
             winners.append(name)
 
-    if tourneyNumber == "allcombined" or tourneyNumber == "allseparate":
+    if tourney == "allcombined" or tourney == "allseparate":
         print("Winners: ", end = "")
         personCount = 0
         for person in winners:
             print(winners[personCount], end = " ")
             if personCount%2 == 1 and personCount != (len(winners)-1):
                 print("|", end = " ")
-            
             if personCount%2 == 0:
                 print("&", end = " ")
-
             personCount +=1
         print()
         print("MVPs:", end = " ")
@@ -329,7 +319,7 @@ def eventStats():
     print()
     print("--------------------------------")
     print()
-    print("Stats leaders for event " + tourneyNumber + ":")
+    print("Stats leaders for event " + tourney + ":")
     print("KD:  " + kdLeaderName + ": " + kdLeader + "  | " + kdLeaderName2 + ": " + kdLeader2 + " | " + kdLeaderName3 + ": " + kdLeader3)
     print("KPR: " + kprLeaderName + ": " + kprLeader + " | " + kprLeaderName2 + ": " + kprLeader2 + " | " + kprLeaderName3 + ": " + kprLeader3)
     print("DPR: " + dprLeaderName + ": " + dprLeader + " | " + dprLeaderName2 + ": " + dprLeader2 + " | " + dprLeaderName3 + ": " + dprLeader3)
@@ -342,14 +332,15 @@ getStats()
 eventStats()
 print()
 while True:
-    playerName = input("Please type a player's name to get their stats, or type 'back' to go back to tournament selection.")
-    
+    playerName = input("Type a player's name to get their stats, 'back' to go to tournament selection, or 'exit' to terminate.")
     if playerName == "back":
         nest.clear()
-        tourneyNumber = eventSelect()
+        tourney = eventSelect()
         getStats()
         eventStats()
         print()
+    elif playerName == "exit":
+        exit()
     else:
         timesPrinted = 0
         index = -1
@@ -357,10 +348,11 @@ while True:
             index+=1 
             if row[0] == playerName:
                 playerStats(playerName, index)
-                if tourneyNumber == "allcombined" or tourneyNumber == "allseparate":
+                if tourney == "allseparate":
                     print()
                     timesPrinted +=1
                 else:
+                    print()
                     break
             elif row[0] != playerName and row == nest[-1] and timesPrinted == 0:
                 print("Name not recognized, here are available options: ", end = "")
@@ -369,4 +361,3 @@ while True:
                 print()
             else:
                 continue
-
