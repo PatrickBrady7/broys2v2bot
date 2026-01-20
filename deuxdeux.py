@@ -1,8 +1,7 @@
-import csv, os
+import os
 
 currDir = os.path.dirname(os.path.abspath(__file__))
-currDirEntries = os.listdir(currDir)
-currDirFiles = [f for f in currDirEntries if os.path.isfile(os.path.join(currDir, f))]
+currDirFiles = [f for f in os.listdir(currDir) if os.path.isfile(os.path.join(currDir, f))]
 nest = []
 
 def eventSelect():
@@ -10,20 +9,20 @@ def eventSelect():
     for fileName in currDirFiles:
         if fileName.endswith(".csv"):
             print(fileName, end = "\t")
-    print("AllCombined\tAllSeparate")
+    print("Combined\tSeparate")
     while True: #Used to select tournament from specified options in working dir
         try:
-            tourneyName = input("Enter the name of the file you want to access. All options show lifetime stats, either combined or separate. Exit terminates the program.\n")
+            tourneyName = input("Enter the name of the file you want to access. Other options show lifetime stats, either combined or separate. Exit terminates the program.\n")
             tourneyName = tourneyName.lower()
             if tourneyName.endswith(".csv"):
                 for fileName in currDirFiles:
                     if tourneyName == fileName:
                         print("Gathering data for specified tourney...")
                 break
-            elif tourneyName == "allcombined":
+            elif tourneyName == "combined":
                 print("Gathering combined stats from tournaments...")
                 break
-            elif tourneyName == "allseparate":
+            elif tourneyName == "separate":
                 print("Gathering stats from tournaments...")
                 break
             elif tourneyName == "exit":
@@ -37,7 +36,7 @@ def eventSelect():
 tourney = eventSelect()
 
 def getStats():
-    if tourney == "allcombined":
+    if tourney == "combined":
         dups = []
         for fileName in currDirFiles:
             if fileName.endswith(".csv"):
@@ -47,34 +46,40 @@ def getStats():
                     if rows[0] in dups:
                         entryCount = 0
                         for entries in nest:
-                            if rows[0] == entries[0] and rows[0] != "ï»¿player":
+                            if rows[0] == entries[0] and rows[0] != "player":
                                 entries[1] = str(int(rows[1])+int(entries[1])) #k
                                 entries[2] = str(int(rows[2])+int(entries[2])) #hs
-                                entries[3] = str(int(rows[3])+int(entries[3])) #d
-                                entries[4] = str(int(rows[4])+int(entries[4])) #ud
-                                entries[5] = str(int(rows[5])+int(entries[5])) #ef
-                                entries[6] = str(int(rows[6])+int(entries[6])) #dam
-                                entries[7] = str(int(rows[7])+int(entries[7])) #r
-                                entries[8] = str(round(int(entries[1])/int(entries[7]), 2)) #kpr
-                                entries[9] = str(round(int(entries[3])/int(entries[7]), 2)) #dpr
-                                entries[10] = str(round(int(entries[4])/int(entries[7]), 2)) #udr
-                                entries[11] = str(round(int(entries[5])/int(entries[7]), 2)) #efr
-                                entries[12] = str(round(int(entries[1])/int(entries[3]), 2)) #kd
-                                entries[13] = str(round(int(entries[2])/int(entries[1]), 4)*100) #hsp
-                                entries[14] = str(round(int(entries[6])/int(entries[7]), 2)) #adr
-                                if rows[15] == "1st":
-                                    entries[15] = "1st"
-                                if rows[16] != "none":
-                                    if rows[16] == "MVP\n" and entries[16] != "MVP\n":
-                                        entries[16] = "MVP\n"
-                                    if rows[16] == "EVP\n" and entries[16] == "none\n":
-                                        entries[16] = "EVP\n"
+                                entries[3] = str(int(rows[3])+int(entries[3])) #mk
+                                entries[4] = str(int(rows[4])+int(entries[4])) #1v2s
+                                entries[5] = str(int(rows[5])+int(entries[5])) #d
+                                entries[6] = str(int(rows[6])+int(entries[6])) #ud
+                                entries[7] = str(int(rows[7])+int(entries[7])) #ef
+                                entries[8] = str(int(rows[8])+int(entries[8])) #dam
+                                entries[9] = str(int(rows[9])+int(entries[9])) #r
+                                entries[10] = str(round(int(entries[1])/int(entries[9]), 2)) #kpr
+                                entries[11] = str(round(int(entries[4])/int(entries[9]), 2)) #1v2pr
+                                entries[12] = str(round(int(entries[3])/int(entries[9]), 2)) #mkpr
+                                entries[13] = str(round(int(entries[5])/int(entries[9]), 2)) #dpr
+                                entries[14] = str(round(int(entries[6])/int(entries[9]), 2)) #udr
+                                entries[15] = str(round(int(entries[7])/int(entries[9]), 2)) #efr
+                                entries[16] = str(round(int(entries[1])/int(entries[5]), 2)) #kd
+                                entries[17] = str(round(int(entries[2])/int(entries[1]), 4)*100) #hsp
+                                entries[18] = str(round(int(entries[8])/int(entries[9]), 2)) #adr
+                                if rows[19] == "1st":
+                                    entries[19] = "1st"
+                                if rows[20] != "none":
+                                    if rows[20] == "MVP" and entries[20] != "MVP":
+                                        entries[20] = "MVP"
+                                    if rows[20] == "EVP" and entries[20] == "none":
+                                        entries[20] = "EVP"
+                                #entries[21] = rows[21]+entries[21] #PadRating
+                                entries[21] = str((1 + ((float(entries[10])/2) + (float(entries[12])/4) + (float(entries[11])/5) - (float(entries[13])) + (float(entries[18])/215) + (float(entries[15])/20)))) #PadRating
                             entryCount +=1
                     else:
                         nest.append(rows)
                         dups.append(rows[0])
                 stats.close()
-    elif tourney == "allseparate":
+    elif tourney == "separate":
         for fileName in currDirFiles:
             if fileName.endswith(".csv"):
                 stats = open(fileName, 'r')
@@ -96,48 +101,60 @@ def getStats():
         rowCounter +=1
 
 def HSpercentage(player):
-    return nest[player][13]
+    return nest[player][17]
 
 def ADR(player):
-    return nest[player][14]
+    return nest[player][18]
 
 def KPR(player):
-    return nest[player][8] 
+    return nest[player][10] 
   
 def DPR(player):
-    return nest[player][9]
+    return nest[player][13]
 
 def EFR(player): 
-    return nest[player][11]
+    return nest[player][15]
 
 def UDR(player):
-    return nest[player][10]
+    return nest[player][14]
 
 def KD(player):
-    return nest[player][12]
+    return nest[player][16]
 
 def Rounds(player):
-    return nest[player][7]
-              
+    return nest[player][9]
+
+def PadRating(player):
+    return nest[player][21]
+
+def MKPR(player):
+    return nest[player][12]
+
+def OvTPR(player):
+    return nest[player][11]
+
 def playerStats(player, index):
     print(player + "'s stats over " + Rounds(index) + " rounds:")
-   
+    print("PadRating: " + PadRating(index)[:4])
+    print()
     print("KD: " + KD(index))
+    print("HS%: " + HSpercentage(index))    
     print("ADR: " + ADR(index))
-    print("HS%: " + HSpercentage(index))
-
     print("KPR: " + KPR(index))
     print("DPR: " + DPR(index))
-
+    print()
+    print("MKPR: " + MKPR(index))
+    print("1v2PR: " + OvTPR(index))
     print("UDR: " + UDR(index))
-    print("EFR: " + EFR(index))
+    print("EFR: " + EFR(index) + "\n")
 
 def eventStats():
     winners = []
     EVPs = []
     MVPs = []
     MVP = ""
-    MVPIndex, indexCount = 0, 0
+    MVPIndex, rowIndex = 0, 0
+    PadRatingLeader, PadRatingLeader2, PadRatingLeader3= "0", "0", "0"
     kdLeader, kdLeader2, kdLeader3= "0", "0", "0"
     kprLeader, kprLeader2, kprLeader3 = "0", "0", "0"
     adrLeader, adrLeader2, adrLeader3 = "0", "0", "0"
@@ -145,6 +162,9 @@ def eventStats():
     dprLeader, dprLeader2, dprLeader3 = "1", "1", "1"
     udrLeader, udrLeader2, udrLeader3 = "0", "0", "0"
     efrLeader, efrLeader2, efrLeader3 = "0", "0", "0"
+    mkprLeader, mkprLeader2, mkprLeader3 = "0", "0", "0"
+    ovtprLeader, ovtprLeader2, ovtprLeader3 = "0", "0", "0"
+    PadRatingLeaderName, PadRatingLeaderName2, PadRatingLeaderName3 = "", "", ""
     kdLeaderName, kdLeaderName2, kdLeaderName3 = "", "", ""
     kprLeaderName, kprLeaderName2, kprLeaderName3 = "", "", ""
     adrLeaderName, adrLeaderName2, adrLeaderName3 = "", "", ""
@@ -152,14 +172,32 @@ def eventStats():
     dprLeaderName, dprLeaderName2, dprLeaderName3 = "", "", ""
     udrLeaderName, udrLeaderName2, udrLeaderName3 = "", "", ""
     efrLeaderName, efrLeaderName2, efrLeaderName3 = "", "", ""
+    mkprLeaderName, mkprLeaderName2, mkprLeaderName3 = "", "", ""
+    ovtprLeaderName, ovtprLeaderName2, ovtprLeaderName3 = "", "", ""
 
-    print("Summary of stats for " + tourney + ":")
-    print()
+    print("Summary of stats for " + tourney + ":\n")
     for row in nest:
         name = row[0]
-        kdCurr, adrCurr, hspCurr = KD(indexCount), ADR(indexCount), HSpercentage(indexCount)
-        kprCurr, dprCurr = KPR(indexCount), DPR(indexCount)
-        udrCurr, efrCurr = UDR(indexCount), EFR(indexCount)
+        PadRatingCurr, kdCurr, adrCurr, hspCurr = PadRating(rowIndex), KD(rowIndex), ADR(rowIndex), HSpercentage(rowIndex)
+        kprCurr, dprCurr = KPR(rowIndex), DPR(rowIndex)
+        udrCurr, efrCurr = UDR(rowIndex), EFR(rowIndex)
+        mkprCurr, ovtprCurr = MKPR(rowIndex), OvTPR(rowIndex)
+
+        if float(PadRatingCurr) > float(PadRatingLeader):
+            PadRatingLeader3 = PadRatingLeader2
+            PadRatingLeaderName3 = PadRatingLeaderName2
+            PadRatingLeader2 = PadRatingLeader
+            PadRatingLeaderName2 = PadRatingLeaderName
+            PadRatingLeader = PadRatingCurr
+            PadRatingLeaderName = name
+        elif float(PadRatingCurr) > float(PadRatingLeader2):
+            PadRatingLeader3 = PadRatingLeader2
+            PadRatingLeaderName3 = PadRatingLeaderName2
+            PadRatingLeader2 = PadRatingCurr
+            PadRatingLeaderName2 = name
+        elif float(PadRatingCurr) > float(PadRatingLeader3):
+            PadRatingLeader3 = PadRatingCurr
+            PadRatingLeaderName3 = name
 
         if float(kdCurr) > float(kdLeader):
             kdLeader3 = kdLeader2
@@ -273,20 +311,52 @@ def eventStats():
             efrLeader3 = efrCurr
             efrLeaderName3 = name
 
-        if row[16] == "MVP\n": 
+        if mkprCurr > mkprLeader:
+            mkprLeader3 = mkprLeader2
+            mkprLeaderName3 = mkprLeaderName2
+            mkprLeader2 = mkprLeader
+            mkprLeaderName2 = mkprLeaderName
+            mkprLeader = mkprCurr
+            mkprLeaderName = name
+        elif mkprCurr > mkprLeader2:
+            mkprLeader3 = mkprLeader2
+            mkprLeaderName3 = mkprLeaderName2
+            mkprLeader2 = mkprCurr
+            mkprLeaderName2 = name
+        elif mkprCurr > mkprLeader3:
+            mkprLeader3 = mkprCurr
+            mkprLeaderName3 = name
+
+        if ovtprCurr > ovtprLeader:
+            ovtprLeader3 = ovtprLeader2
+            ovtprLeaderName3 = ovtprLeaderName2
+            ovtprLeader2 = ovtprLeader
+            ovtprLeaderName2 = ovtprLeaderName
+            ovtprLeader = ovtprCurr
+            ovtprLeaderName = name
+        elif ovtprCurr > ovtprLeader2:
+            ovtprLeader3 = ovtprLeader2
+            ovtprLeaderName3 = ovtprLeaderName2
+            ovtprLeader2 = ovtprCurr
+            ovtprLeaderName2 = name
+        elif ovtprCurr > ovtprLeader3:
+            ovtprLeader3 = ovtprCurr
+            ovtprLeaderName3 = name
+
+        if row[20] == "MVP": 
             MVP = name
-            MVPIndex = indexCount
+            MVPIndex = rowIndex
             MVPs.append(MVP)
-        indexCount+=1
-        if row[16] == "EVP\n":
+        rowIndex+=1
+        if row[20] == "EVP":
             EVPs.append(name)
-        if row[15] == "1st":
+        if row[19] == "1st":
             winners.append(name)
 
-    if tourney == "allcombined" or tourney == "allseparate":
+    if tourney == "combined" or tourney == "separate":
         print("Winners: ", end = "")
         personCount = 0
-        for person in winners:
+        for _ in winners:
             print(winners[personCount], end = " ")
             if personCount%2 == 1 and personCount != (len(winners)-1):
                 print("|", end = " ")
@@ -303,11 +373,9 @@ def eventStats():
             else:
                 print(index, end = ", ")
     else:
-        print("Winners: " + winners[0] + " & " + winners[1])
-        print()
+        print("Winners: " + winners[0] + " & " + winners[1] + "\n")
         print("MVP: " + MVP)
         playerStats(MVP, MVPIndex)
-        print()
     
     print("EVPs:" , end =" ")
     for index in EVPs:
@@ -316,21 +384,29 @@ def eventStats():
         else:
             print(index, end = ", ")
 
-    print()
-    print("--------------------------------")
-    print()
+    PadRatingLeader = round(float(PadRatingLeader), 2)
+    PadRatingLeader2 = round(float(PadRatingLeader2), 2)
+    PadRatingLeader3 = round(float(PadRatingLeader3), 2)
+
+    PadRatingLeader = str(PadRatingLeader)
+    PadRatingLeader2 = str(PadRatingLeader2)
+    PadRatingLeader3 = str(PadRatingLeader3)
+
+    print("\n--------------------------------\n")
     print("Stats leaders for event " + tourney + ":")
+    print("PadRating:  " + PadRatingLeaderName + ": " + PadRatingLeader + "  | " + PadRatingLeaderName2 + ": " + PadRatingLeader2 + " | " + PadRatingLeaderName3 + ": " + PadRatingLeader3)
     print("KD:  " + kdLeaderName + ": " + kdLeader + "  | " + kdLeaderName2 + ": " + kdLeader2 + " | " + kdLeaderName3 + ": " + kdLeader3)
     print("KPR: " + kprLeaderName + ": " + kprLeader + " | " + kprLeaderName2 + ": " + kprLeader2 + " | " + kprLeaderName3 + ": " + kprLeader3)
     print("DPR: " + dprLeaderName + ": " + dprLeader + " | " + dprLeaderName2 + ": " + dprLeader2 + " | " + dprLeaderName3 + ": " + dprLeader3)
     print("ADR: " + adrLeaderName + ": " + adrLeader + " | " + adrLeaderName2 + ": " + adrLeader2 + " | " + adrLeaderName3 + ": " + adrLeader3)
     print("HS%: " + hspLeaderName + ": " + hspLeader + "% | " + hspLeaderName2 + ": " + hspLeader2 + "% | " + hspLeaderName3 + ": " + hspLeader3 + "%")
+    print("MKPR: " + mkprLeaderName + ": " + mkprLeader + " | " + mkprLeaderName2 + ": " + mkprLeader2 + " | " + mkprLeaderName3 + ": " + mkprLeader3)
+    print("1v2PR: " + ovtprLeaderName + ": " + ovtprLeader + " | " + ovtprLeaderName2 + ": " + ovtprLeader2 + " | " + ovtprLeaderName3 + ": " + ovtprLeader3)
     print("UDR: " + udrLeaderName + ": " + udrLeader + " | " + udrLeaderName2 + ": " + udrLeader2 + " | " + udrLeaderName3 + ": " + udrLeader3)
-    print("EFR: " + efrLeaderName + ": " + efrLeader + " | " + efrLeaderName2 + ": " + efrLeader2 + " | " + efrLeaderName3 + ": " + efrLeader3)
+    print("EFR: " + efrLeaderName + ": " + efrLeader + " | " + efrLeaderName2 + ": " + efrLeader2 + " | " + efrLeaderName3 + ": " + efrLeader3 + "\n")
 
 getStats()
 eventStats()
-print()
 while True:
     playerName = input("Type a player's name to get their stats, 'back' to go to tournament selection, or 'exit' to terminate.")
     if playerName == "back":
@@ -338,7 +414,6 @@ while True:
         tourney = eventSelect()
         getStats()
         eventStats()
-        print()
     elif playerName == "exit":
         exit()
     else:
@@ -348,11 +423,9 @@ while True:
             index+=1 
             if row[0] == playerName:
                 playerStats(playerName, index)
-                if tourney == "allseparate":
-                    print()
+                if tourney == "separate":
                     timesPrinted +=1
                 else:
-                    print()
                     break
             elif row[0] != playerName and row == nest[-1] and timesPrinted == 0:
                 print("Name not recognized, here are available options: ", end = "")
